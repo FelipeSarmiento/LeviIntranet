@@ -1,0 +1,16 @@
+export const typeFormEnum = {
+    Requisiciones : "Requisiciones",
+    RequisicionesPedido: "RequisicionesPedido",
+    Remisiones: "Remisiones",
+    PlanoJumbo: "PlanoJumbo",
+    PlanoFalabella: "PlanoFalabella",
+    PlanoConsignacion: "PlanoConsignacion",
+    PlanoFacturacion: "PlanoFacturacion",
+    PlanoNomina: "PlanoNomina",
+    DocumentoOfima: "DocumentoOfima",
+    IngresoBonificacion: "IngresoBonificacion",
+    LiquidacionBonificacion: "LiquidacionBonificacion",
+    CertificadoLaboral: "CertificadoLaboral",
+    CertificadoRetirado: "CertificadoRetirado",
+    VencimientosContratos: "CertificadoVencimientos",
+}
