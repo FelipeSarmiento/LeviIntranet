@@ -13,4 +13,5 @@ export const typeFormEnum = {
     CertificadoLaboral: "CertificadoLaboral",
     CertificadoRetirado: "CertificadoRetirado",
     VencimientosContratos: "CertificadoVencimientos",
+    TPOaOCI: "TPOaOCI",
 }

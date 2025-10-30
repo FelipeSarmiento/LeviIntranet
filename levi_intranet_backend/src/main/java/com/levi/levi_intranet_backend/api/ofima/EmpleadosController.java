@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/ofima/certificados")
-public class CertificadosController {
+@RequestMapping("/api/ofima/empleados")
+public class EmpleadosController {
 
     private final CertificadosService certificadosService;
 
-    public CertificadosController(CertificadosService certificadosService) {
+    public EmpleadosController(CertificadosService certificadosService) {
         this.certificadosService = certificadosService;
     }
 

@@ -1,9 +1,9 @@
 import {printPdfBytes} from "@/lib/hooks/etiquetas/etiquetasHooks";
-import {CertificadosInterface} from "@/lib/interfaces/_interfaces";
+import {EmpleadoInterface} from "@/lib/interfaces/_interfaces";
 
 import {PDFDocument, PDFFont, PDFPage, rgb, StandardFonts} from "pdf-lib";
 
-export async function generateCertificado(tipoCertificado: string, data: CertificadosInterface, destinatario?: string, funciones?: string, historialContatos?: CertificadosInterface[]) {
+export async function generateCertificado(tipoCertificado: string, data: EmpleadoInterface, destinatario?: string, funciones?: string, historialContatos?: EmpleadoInterface[]) {
 
     // === Función para envolver texto ===
     function wrapText(text: string, font: PDFFont, fontSize: number, maxWidth: number) {

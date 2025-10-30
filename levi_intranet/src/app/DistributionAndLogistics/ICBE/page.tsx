@@ -297,7 +297,6 @@ export default function Home() {
 
     async function generateData(data: FileList) {
         try {
-            console.log("YES")
             const dataFile = await data.arrayBuffer();
             const workbook = XLSX.read(dataFile, {type: "array"});
             const sheetName = workbook.SheetNames[0];

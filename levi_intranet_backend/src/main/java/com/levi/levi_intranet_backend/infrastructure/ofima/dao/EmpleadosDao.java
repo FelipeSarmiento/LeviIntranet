@@ -1,30 +1,28 @@
 package com.levi.levi_intranet_backend.infrastructure.ofima.dao;
 
-import com.levi.levi_intranet_backend.domain.ofima.Certificados;
-import jakarta.persistence.Convert;
+import com.levi.levi_intranet_backend.domain.ofima.Empleados;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.*;
 
 @Repository
-public class CertificadosDao {
+public class EmpleadosDao {
     private final NamedParameterJdbcTemplate jdbc;
 
-    public CertificadosDao(@Qualifier("ofimaJdbc") NamedParameterJdbcTemplate jdbc) {
+    public EmpleadosDao(@Qualifier("ofimaJdbc") NamedParameterJdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
-    private static final RowMapper<Certificados> MAPPER = new RowMapper<Certificados>() {
+    private static final RowMapper<Empleados> MAPPER = new RowMapper<Empleados>() {
         @Override
-        public Certificados mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Certificados c = new Certificados();
+        public Empleados mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Empleados c = new Empleados();
             c.setActivo(rs.getInt("Activo"));
             c.setCargo(rs.getString("Cargo").trim().toUpperCase(Locale.ROOT));
             c.setNombre(rs.getString("Nombre").trim().toUpperCase(Locale.ROOT));
@@ -48,10 +46,10 @@ public class CertificadosDao {
         }
     };
 
-    private static final RowMapper<Certificados> MAPPER_CONTRATOS_VENCER = new RowMapper<Certificados>() {
+    private static final RowMapper<Empleados> MAPPER_CONTRATOS_VENCER = new RowMapper<Empleados>() {
         @Override
-        public Certificados mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Certificados c = new Certificados();
+        public Empleados mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Empleados c = new Empleados();
             c.setCargo(rs.getString("Cargo").trim().toUpperCase(Locale.ROOT));
             c.setNombre(String.join(" ", rs.getString("Nombre").trim().split(" ")).toUpperCase(Locale.ROOT));
             c.setFechaContrato(rs.getDate("FechaContrato"));
@@ -69,7 +67,7 @@ public class CertificadosDao {
         }
     };
 
-    public Optional<Certificados> findCertificadoActivoByCedula(String cedula) {
+    public Optional<Empleados> findEmpleadoActivoByCedula(String cedula) {
         String sql = """
         SELECT TOP 1
             CEDULA AS Cedula,
@@ -97,7 +95,7 @@ public class CertificadosDao {
         var params = Map.of("Cedula", cedula);
         return jdbc.query(sql, params, MAPPER).stream().findFirst();
     }
-    public List<Certificados> findCertificadosActivoByCedula(String cedula) {
+    public List<Empleados> findEmpleadosActivoByCedula(String cedula) {
         String sql = """
         SELECT
             CEDULA AS Cedula,
@@ -125,7 +123,7 @@ public class CertificadosDao {
         var params = Map.of("Cedula", cedula);
         return jdbc.query(sql, params, MAPPER);
     }
-    public List<Certificados> findContratosProximosVencer() {
+    public List<Empleados> findEmpleadosProximosVencer() {
         String sql = """
         SELECT enc.CEDULA                                                          as Cedula,
                (RTRIM(LTRIM(enc.APELLIDO)) + ' ' + RTRIM(LTRIM(enc.APELLIDO2)) + ' ' + RTRIM(LTRIM(enc.NOMBRE)) + ' ' + RTRIM(LTRIM(enc.NOMBRE2)))            as Nombre,
@@ -150,7 +148,7 @@ public class CertificadosDao {
 """;
         return jdbc.query(sql, MAPPER_CONTRATOS_VENCER);
     }
-    public List<Certificados> findContratosProximosVencerByCedula(String cedula, String centroCostos) {
+    public List<Empleados> findEmpleadosProximosVencerByCedula(String cedula, String centroCostos) {
         String sql = """
         SELECT enc.CEDULA                                                          as Cedula,
                (RTRIM(LTRIM(enc.APELLIDO)) + ' ' + RTRIM(LTRIM(enc.APELLIDO2)) + ' ' + RTRIM(LTRIM(enc.NOMBRE)) + ' ' + RTRIM(LTRIM(enc.NOMBRE2)))           as Nombre,
@@ -178,7 +176,7 @@ public class CertificadosDao {
         var params = Map.of("Cedula", cedula, "CentroCostos", centroCostos);
         return jdbc.query(sql, params, MAPPER_CONTRATOS_VENCER);
     }
-    public Optional<Certificados> findCertificadoRetiradoByCedula(String cedula) {
+    public Optional<Empleados> findEmpleadoRetiradoByCedula(String cedula) {
         String sql = """
             WITH Datos AS (
               SELECT
@@ -228,7 +226,7 @@ public class CertificadosDao {
         var params = Map.of("Cedula", cedula);
         return jdbc.query(sql, params, MAPPER).stream().findFirst();
     }
-    public List<Certificados> findCertificadosRetiradoByCedula(String cedula) {
+    public List<Empleados> findEmpleadosRetiradoByCedula(String cedula) {
         String sql = """
         SELECT
             CEDULA AS Cedula,

@@ -1,10 +1,8 @@
 package com.levi.levi_intranet_backend.domain.ofima;
 
-import jakarta.persistence.Id;
-
 import java.util.Date;
 
-public class Certificados {
+public class Empleados {
 
     private String cedula;
     private String nombre;

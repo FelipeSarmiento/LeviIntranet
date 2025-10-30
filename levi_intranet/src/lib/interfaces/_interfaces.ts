@@ -1,4 +1,3 @@
-
 export interface ItemsInterface {
     idItem: string;
     codigo: string,
@@ -71,6 +70,37 @@ export interface BodegasInterface {
     rowIdBodegaPropia: number
 }
 
+export interface CentroCostosSiesaInterface {
+    idCentroCosto: string,
+    centroCosto: string,
+    descripcion: string
+}
+
+export interface TipoInventariosInterface {
+    idTipoInventario: string,
+    descripcion: string,
+}
+
+export interface ActivosFijosInterface {
+    rowIdActivoFijo: string,
+    idCompania: string,
+    idActivoFijo: string,
+    referencia: string,
+    descripcion: string,
+    compania: string,
+    rowIdCentroCosto: string,
+    rowIdResponsable: string,
+    idUn: string,
+    rowIdMovimientoEntidad: string,
+    marca: string,
+    modelo: string,
+    serie: string,
+    motor: string,
+    notas: string,
+    centroCosto?: CentroCostosSiesaInterface,
+    tipoInventario?: TipoInventariosInterface
+}
+
 export interface UbicacionesInterface {
     id: string;
     descripcion: string;
@@ -93,7 +123,7 @@ export interface DataFormHookInterface {
     bodegaEnable?: boolean | null,
     cartaTypeEnable?: boolean | null,
     centroCostosEnable?: boolean | null,
-    centroCostosOptions?: CentroCostosInterface[] | null,
+    centroCostosOptions?: CentroCostosOfimaInterface[] | null,
     historialContratosEnable?: boolean | null,
     cartaTypeOptions?: CartaTypesInterface[] | null,
     placeholderCartaTypeOptions?: string | null,
@@ -118,7 +148,7 @@ export interface CartaTypesInterface {
     label: string;
 }
 
-export interface CentroCostosInterface {
+export interface CentroCostosOfimaInterface {
     codigo: string;
     descripcion: string;
 }
@@ -155,7 +185,7 @@ export interface ProductoRemisionInterface {
     "direccion": string;
 }
 
-export interface CertificadosInterface {
+export interface EmpleadoInterface {
     "cedula": string;
     "nombre": string;
     "fechaContrato": string | number;
@@ -179,4 +209,19 @@ export interface CertificadosInterface {
     "segundoNombre": string;
     "email": string;
     "activo": number
+}
+
+export interface BonificacionesDataExcelInterface {
+    cedula: string;
+    nombreEmpleado: string;
+    pagoBonificacion: number;
+    existeEmpleado: boolean;
+}
+
+export interface TasaCambioInterface {
+    "compania": number,
+    "idTipoCambio": string,
+    "idMoneda": string,
+    "fecha": string,
+    "tasa": number
 }

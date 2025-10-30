@@ -31,12 +31,12 @@ export default function RootLayout({
     <html lang="en">
       <body className="h-screen overflow-y-scroll">
       <header>
-        <nav className="relative flex items-center justify-center h-20 px-10 border-b-4 border-red-500">
-            <Image className="absolute left-20" src="/images/Levis-Logo.png" width={100} height={100} alt="" />
+        <nav className="relative flex items-center justify-center h-20 px-10 border-b-4">
+            <Image className="absolute left-20" src="/images/Levis-LogoEscalaGrises.png" width={100} height={100} alt="" />
           <NavigationBar/>
             <div className="hover:text-red-500 absolute gap-x-2 right-20 flex items-center font-bold justify-center h-full w-56">
                 <div>
-                    <h3>Felipe Sarmiento </h3>
+                    <h3>Felipe Sarmiento</h3>
                     <h4 className="text-[12px] text-right text-gray-500">Admin</h4>
                 </div>
                 <LogOutIcon/>

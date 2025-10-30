@@ -15,43 +15,144 @@ import {
 } from "@/components/ui/navigation-menu"
 import {Separator} from "@/components/ui/separator";
 
-const components: { title: string; href: string; description: string }[] = [
+interface ModulesInterface {
+    title: string,
+    href: string,
+    items?: string[]
+}
+
+interface ItemsInterface {
+    title: string,
+    modules: ModulesInterface[]
+}
+
+const itemsNavBar = [
     {
-        title: "Alert Dialog",
-        href: "/docs/primitives/alert-dialog",
-        description:
-            "A modal dialog that interrupts the user with important content and expects a response.",
+        title: "Wholesale",
+        modules: [
+            {
+                title: "Requisiciones",
+                href: "/Wholesale/Requisiciones",
+                items: [
+                    'Requisiciones Jumbo',
+                    'Requisiciones Exito por Bodega',
+                    'Requisiciones Exito por Pedido'
+                ]
+            },
+            {
+                title: "Planos",
+                href: "/Wholesale/Planos",
+                items: [
+                    'Requisiciones Jumbo',
+                    'Requisiciones Exito por Bodega',
+                    'Requisiciones Exito por Pedido'
+                ]
+            },
+            {
+                title: "Pedidos*",
+                href: "/Wholesale/Planos"
+            }
+        ]
     },
     {
-        title: "Hover Card",
-        href: "/docs/primitives/hover-card",
-        description:
-            "For sighted users to preview content available behind a link.",
+        title: "Accounting",
+        modules: [
+            {
+                title: "Activos Fijos",
+                href: "/Accounting/ActivosFijos",
+            }
+        ]
     },
     {
-        title: "Progress",
-        href: "/docs/primitives/progress",
-        description:
-            "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+        title: "MPIM",
+        modules: [
+            {
+                title: "TPO a OCI",
+                href: "/MPIM/TPOaOCI",
+            },
+            {
+                title: "Pedidos Definitivos",
+                href: "/MPIM/TPOaOCI",
+            }
+        ]
     },
     {
-        title: "Scroll-area",
-        href: "/docs/primitives/scroll-area",
-        description: "Visually or semantically separates content.",
+        title: "Human Resources",
+        modules: [
+            {
+                title: "Nomima",
+                href: "/HumanResources/Nomina",
+                items: [
+                    'Plano Nomina*',
+                    'Cambiar Documento Ofima*'
+                ]
+            },
+            {
+                title: "Bonificaciones",
+                href: "/HumanResources/Bonificaciones",
+                items: [
+                    'Ingresar Bonificaciones',
+                    'Liquidar Bonificaciones*'
+                ]
+            },
+            {
+                title: "Certificados",
+                href: "/HumanResources/Bonificaciones",
+                items: [
+                    'Certificados Laborales Activos',
+                    'Certificados Laborales Retirados',
+                    'Contratos Proximos a Vencer'
+                ]
+            }
+        ]
     },
     {
-        title: "Tabs",
-        href: "/docs/primitives/tabs",
-        description:
-            "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+        title: "Retail",
+        modules: [
+            {
+                title: "Impresión Códigos de Barra",
+                href: "/DistributionAndLogistics/ICB",
+            },
+            {
+                title: "Impresión Descuentos",
+                href: "/DistributionAndLogistics/ICB",
+            },
+        ]
     },
     {
-        title: "Tooltip",
-        href: "/docs/primitives/tooltip",
-        description:
-            "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+        title: "Distribution and Logistics",
+        modules: [
+            {
+                title: "Remisiones Jumbo",
+                href: "/DistributionAndLogistics/Nomina",
+            },
+            {
+                title: "Impresión Códigos de Barra",
+                href: "/DistributionAndLogistics/ICB",
+            },
+            {
+                title: "Impresión Precios desde Siesa",
+                href: "/DistributionAndLogistics/IPS",
+            },
+            {
+                title: "Impresión Códigos de Barra OPC",
+                href: "/DistributionAndLogistics/ICBOPC",
+            },
+            {
+                title: "Impresión Etiquetas y Precios Manual",
+                href: "/DistributionAndLogistics/IECE",
+            },
+            {
+                title: "Impresión Códigos de Barra desde Excel",
+                href: "/DistributionAndLogistics/ICBE",
+            },
+            {
+                title: "Impresión Ubicaciones",
+                href: "/DistributionAndLogistics/Ubicaciones",
+            },
+        ]
     },
-]
+] as ItemsInterface[]
 
 export function NavigationBar() {
     return (
@@ -59,165 +160,46 @@ export function NavigationBar() {
             <NavigationMenuList>
                 <NavigationMenuItem>
                     <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                        <Link href="">Inicio</Link>
+                        <Link href="">Home</Link>
                     </NavigationMenuLink>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger>Gestión Documental</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="grid w-[300px] gap-4">
-                            <li>
-                                <NavigationMenuLink asChild>
-                                    <Link href="/GestionDocumental/Requisiciones">
-                                        <div className="font-medium">Requisiciones</div>
-                                        <div className="text-muted-foreground">
-                                            <ul>
-                                                <li>- Requisiciones Jumbo</li>
-                                                <li>- Requisiciones Exito por Bodega (Daniela)</li>
-                                                <li>- Requisiciones Exito por Pedido (Sebastian)</li>
-                                            </ul>
-                                        </div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/GestionDocumental/Planos">
-                                        <div className="font-medium">Planos</div>
-                                        <div className="text-muted-foreground">
-                                            <ul>
-                                                <li>- Plano Pedidos Jumbo</li>
-                                                <li>- Plano Pedidos Falabella</li>
-                                                <li>- Plano Consignaciones</li>
-                                                <li>- Plano Facturación VMI</li>
-                                            </ul>
-                                        </div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/GestionDocumental/Remisiones">
-                                        <div className="font-medium">Remisiones</div>
-                                        <div className="text-muted-foreground">
-                                            <ul>
-                                                <li>- Remisiones Jumbo</li>
-                                            </ul>
-                                        </div>
-                                    </Link>
-                                </NavigationMenuLink>
-                            </li>
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger>Gestión Humana</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="grid w-[300px] gap-4">
-                            <li>
-                                <NavigationMenuLink asChild>
-                                    <Link href="/GestionHumana/Nomina">
-                                        <div className="font-medium">Nómina</div>
-                                        <div className="text-muted-foreground">
-                                            <ul>
-                                                <li>- Plano Nómina</li>
-                                                <li>- Cambiar Número Documento Ofima</li>
-                                            </ul>
-                                        </div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/GestionHumana/Bonificaciones">
-                                        <div className="font-medium">Bonificaciones</div>
-                                        <div className="text-muted-foreground">
-                                            <ul>
-                                                <li>- Ingreso Bonificaciones</li>
-                                                <li>- Liquidar Bonificaciones</li>
-                                            </ul>
-                                        </div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/GestionHumana/Certificados">
-                                        <div className="font-medium">Certificados</div>
-                                        <div className="text-muted-foreground">
-                                            <ul>
-                                                <li>- Certificados Laborales Activos</li>
-                                                <li>- Certificados Laborales Retirados</li>
-                                                <li>- Vencimiento de Contratos</li>
-                                            </ul>
-                                        </div>
-                                    </Link>
-                                </NavigationMenuLink>
-                            </li>
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger>Etiquetas DC</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="grid w-[300px] gap-4">
-                            <li>
-                                <NavigationMenuLink asChild>
-                                    <Link href="/Etiquetas/ICB">
-                                        <div className="font-medium">Impresión Códigos de Barra</div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/Etiquetas/IPS">
-                                        <div className="font-medium">Impresión Precios desde Siesa</div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/Etiquetas/ICBOPC">
-                                        <div className="font-medium">Impresión Códigos de Barra OPC</div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/Etiquetas/IECE">
-                                        <div className="font-medium">Impresión Etiquetas y Precios Manual</div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/Etiquetas/ICBE">
-                                        <div className="font-medium">Impresión Códigos de Barra desde Excel</div>
-                                    </Link>
-                                </NavigationMenuLink>
-                                <Separator className="my-1 bg-red-500" />
-                                <NavigationMenuLink asChild>
-                                    <Link href="/Etiquetas/Ubicaciones">
-                                        <div className="font-medium">Impresión Ubicaciones</div>
-                                    </Link>
-                                </NavigationMenuLink>
-                            </li>
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
+                {
+                    itemsNavBar.map((item, index) => (
+                        <NavigationMenuItem key={"ItemNav-" + index}>
+                            <NavigationMenuTrigger>{ item.title }</NavigationMenuTrigger>
+                            <NavigationMenuContent>
+                                <ul className="grid w-[300px] gap-4">
+                                    <li>
+                                        {
+                                            item.modules.map((module, _index) => (
+                                                <div key={`ItemNavModule${module.title}-${index}`}>
+                                                    <NavigationMenuLink  asChild>
+                                                        <Link href={ module.href }>
+                                                            <div className="font-medium">{ module.title }</div>
+                                                            <div className="text-muted-foreground">
+                                                                <ul>
+                                                                    {
+                                                                        module?.items ? module?.items.map((item, __index) => (
+                                                                            <li key={`ItemNav-${module.title}-${index}-${__index}`}>- { item }</li>
+                                                                        )) : ''
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        </Link>
+                                                    </NavigationMenuLink>
+                                                    {
+                                                        _index < item.modules.length - 1 ? <Separator className="my-1 " /> : ''
+                                                    }
+                                                </div>
+                                            ))
+                                        }
+                                    </li>
+                                </ul>
+                            </NavigationMenuContent>
+                        </NavigationMenuItem>
+                    ))
+                }
             </NavigationMenuList>
         </NavigationMenu>
-    )
-}
-
-function ListItem({
-                      title,
-                      children,
-                      href,
-                      ...props
-                  }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
-    return (
-        <li {...props}>
-            <NavigationMenuLink asChild>
-                <Link href={href}>
-                    <div className="text-sm leading-none font-medium">{title}</div>
-                    <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-                        {children}
-                    </p>
-                </Link>
-            </NavigationMenuLink>
-        </li>
     )
 }

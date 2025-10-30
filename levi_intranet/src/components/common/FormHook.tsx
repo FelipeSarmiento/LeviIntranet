@@ -13,17 +13,23 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {ArrowBigRight, DownloadIcon, EyeIcon, File, LoaderIcon} from "lucide-react";
+import {ArrowBigRight, CirclePlusIcon, DownloadIcon, EyeIcon, File, LoaderIcon} from "lucide-react";
 import {useEffect, useState} from "react";
-import {CertificadosInterface, DataFormHookInterface, FileDownloadInterface, FilesDownloadInterface, QuincenasInterface} from "@/lib/interfaces/_interfaces";
+import {EmpleadoInterface, DataFormHookInterface, FileDownloadInterface, FilesDownloadInterface, QuincenasInterface, BonificacionesDataExcelInterface, UbicacionesInterface} from "@/lib/interfaces/_interfaces";
 import {getDataRemisiones} from "@/lib/hooks/remisiones";
 import {generateCertificado} from "@/lib/hooks/certificados";
-import {getCertificadoActivo, getCertificadoRetirado, getContratosProximosVencer, getContratosProximosVencerByCedula, getHistorialContratosRetirado} from "@/lib/hooks/api/ofimaBackEndAPI";
+import {
+    getAllEmpleadosActivos,
+    getEmpleadoActivoByCedula,
+    getEmpleadoRetiradoByCedula,
+    getEmpleadosProximosVencer,
+    getEmpleadosProximosVencerByCedula,
+    getHistorialContratosEmpleadoRetirado
+} from "@/lib/hooks/api/ofimaBackEndAPI";
 import {sendEmail} from "@/components/common/mailHook";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {addBonificaciones} from "@/lib/hooks/api/levisBackEndAPI";
 
-/*
-* {buttonLabel = 'Generar', dateEnable = false, bodegaEnable = false, fileEnable = false, documentTypeEnable = false, ordenCompraEnable = false, notesEnable = false, documentEnable = false, companyEnable = false, responsibleEnable = false, quincenaEnable = false, customButtons = false, primaryButtonLabel = 'Consultar', secondButtonLabel = 'Listar Datos', CartaTypeEnable = false, destinatarioEnable = false, valorDocumentoEnable = false, newDocumentEnable = false, funcionesEnable = false}
-* */
 export const FormHook = ({data}: { data: DataFormHookInterface }) => {
 
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -48,11 +54,12 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
     const [fileDownload, setFileDownload] = useState<FileDownloadInterface>()
     const [filesDownload, setFilesDownload] = useState<FilesDownloadInterface[]>([])
     const [emailTo, setEmailTo] = useState<string>()
-    const [dataEmployee, setDataEmployee] = useState<CertificadosInterface>()
+    const [dataEmployee, setDataEmployee] = useState<EmpleadoInterface>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [funcionesEnable, setFuncionesEnable] = useState<boolean>(false)
     const [historialContratosEnable, setHistorialContratosEnable] = useState<boolean>(false)
-    const [contratosProximosVencer, setContratosProximosVencer] = useState<CertificadosInterface[]>()
+    const [contratosProximosVencer, setContratosProximosVencer] = useState<EmpleadoInterface[]>()
+    const [bonificacionesEmpleadosDataExcel, setBonificacionesEmpleadosDataExcel] = useState<BonificacionesDataExcelInterface[]>()
 
     useEffect(() => {
         if (error) {
@@ -205,7 +212,7 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                     setFilesDownload(archivosDescargar)
                     break;
                 case typeFormEnum.CertificadoLaboral:
-                    dataEmployeeResult = await getCertificadoActivo(documentInput)
+                    dataEmployeeResult = await getEmpleadoActivoByCedula(documentInput)
                     if (dataEmployeeResult) {
                         setDataEmployee(dataEmployeeResult)
 
@@ -218,14 +225,14 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
 
                     break;
                 case typeFormEnum.CertificadoRetirado:
-                    dataEmployeeResult = await getCertificadoRetirado(documentInput)
+                    dataEmployeeResult = await getEmpleadoRetiradoByCedula(documentInput)
 
                     if (dataEmployeeResult) {
                         setDataEmployee(dataEmployeeResult)
 
                         let historialContratos;
                         if (historialContratosEnable) {
-                            historialContratos = await getHistorialContratosRetirado(documentInput)
+                            historialContratos = await getHistorialContratosEmpleadoRetirado(documentInput)
                         }
 
                         plano = await generateCertificado('retirado', dataEmployeeResult, destinatarioInput, funcionesInput, historialContratos);
@@ -238,22 +245,22 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                     break;
                 case typeFormEnum.VencimientosContratos:
                     setContratosProximosVencer([])
-                    dataEmployeeResult = await getContratosProximosVencer()
+                    dataEmployeeResult = await getEmpleadosProximosVencer()
                     if (centroCostosSelect && centroCostosSelect !== 'todos') {
-                        if (!documentInput){
+                        if (!documentInput) {
                             setError("Debes digitar el documento del empleado si vas a consultar por centro de costos")
                             return;
                         }
                     }
 
                     if (documentInput) {
-                        if (!centroCostosSelect || centroCostosSelect === 'todos'){
+                        if (!centroCostosSelect || centroCostosSelect === 'todos') {
                             setError("Debes seleccionar un centro de costos si vas a consultar por empleado")
                             return;
                         }
-                        dataEmployeeResult = await getContratosProximosVencerByCedula(documentInput, centroCostosSelect)
+                        dataEmployeeResult = await getEmpleadosProximosVencerByCedula(documentInput, centroCostosSelect)
                     } else {
-                        dataEmployeeResult = await getContratosProximosVencer()
+                        dataEmployeeResult = await getEmpleadosProximosVencer()
                     }
 
                     if (dataEmployeeResult) {
@@ -280,6 +287,18 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                     }
 
                     break;
+                case typeFormEnum.IngresoBonificacion:
+                    const dataBonificacion = bonificacionesEmpleadosDataExcel?.filter(b => b.existeEmpleado)
+                    if (dataBonificacion && quincenaSelect){
+                        const result = await addBonificaciones("PRUEBA", "Felipe Sarmiento", dataBonificacion)
+                        if (result){
+                            alert("Se han ingresado las bonificaciones correctamente")
+                        }
+                        else {
+                            alert("Error al ingresar las bonificaciones")
+                        }
+                    }
+                    break;
             }
 
             if (plano) {
@@ -303,8 +322,8 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
 
     return (
         <>
-            <div className="min-w-3xl px-10 gap-x-10 flex items-center rounded-xl border-red-500 flex-1">
-                <div className="flex flex-col items-center justify-center border-2 border-red-500 rounded-2xl w-72 px-10 py-4 min-h-80 gap-y-4">
+            <div className="min-w-3xl px-10 gap-x-10 flex items-center rounded-xl flex-1">
+                <div className="flex flex-col items-center justify-center border-2 rounded-2xl min-w-72 w-72 px-10 py-4 min-h-80 gap-y-4">
                     {
                         data?.responsibleEnable ? (
                             <div className="flex flex-col justify-center items-center gap-y-1 h-1/4 w-full">
@@ -321,7 +340,7 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                                     <span className="font-bold">{file?.name ?? 'Nombre Archivo.xlsx'}</span>
                                 </div>
                                 <label className="flex items-center justify-center h-1/4 cursor-pointer">
-                                    <span className="border-2 border-red-600 hover:border-red-700 text-red-500 py-2 px-4 rounded">Subir archivo</span>
+                                    <span className="border-2 py-2 px-4 rounded">Subir archivo</span>
                                     <Input
                                         type="file"
                                         accept=".xlsx"
@@ -390,7 +409,6 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                             </div>
                         ) : ''
                     }
-
                     {
                         data?.dateEnable ? (
                             <div className="flex flex-col justify-center items-center gap-y-1 h-1/4 w-full">
@@ -584,20 +602,89 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                         ) : ''
                     }
                     {
-                        data?.customButtons ? (
+                        data?.typeForm === typeFormEnum.IngresoBonificacion ? (
                             <div className="flex gap-x-2">
-                                <label className="flex items-center justify-center h-1/4 cursor-pointer">
-                                    <span className="border-2 border-red-600 hover:border-red-700 text-red-500 py-2 px-4 rounded">{data?.primaryButtonLabel}</span>
-                                </label>
-                                <label className="flex items-center justify-center h-1/4 cursor-pointer">
-                                    <span className="border-2 border-red-600 hover:border-red-700 text-red-500 py-2 px-4 rounded text-nowrap">{data?.secondButtonLabel}</span>
-                                </label>
+                                <button disabled={!file} onClick={listarDatos}
+                                        className=" rounded border-2  disabled:text-gray-500 hover:border-red-700 disabled:border-gray-500  flex items-center justify-center h-1/4 cursor-pointer">
+                                    <span className="py-2 px-4 ">Listar Datos</span>
+                                </button>
                             </div>
                         ) : ''
                     }
                 </div>
+                {
+                    bonificacionesEmpleadosDataExcel ? (
+                        <div className="flex flex-col items-center border-2 py-2 px-2 border-gray-500 rounded-2xl gap-y-2 max-w-[550px] h-80">
+                            <Table className="border font-normal w-full">
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-10">Cedula</TableHead>
+                                        <TableHead className="w-40 font-medium">Nombres</TableHead>
+                                        <TableHead className="w-40 font-medium">Pagos</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody className="w-full">
+                                    {
+                                        bonificacionesEmpleadosDataExcel.map((empleado) => {
+                                            return (
+                                                <TableRow key={"empleado-" + empleado?.cedula} className={ !empleado?.existeEmpleado ? 'bg-red-200' : '' }>
+                                                    <TableCell className="font-medium w-10 border">
+                                                        {empleado?.cedula}
+                                                    </TableCell>
+                                                    <TableCell className="w-[calc(50%_-_40px)] min-w-[calc(50%_-_40px)] border">
+                                                        {empleado?.nombreEmpleado}
+                                                        {
+                                                            !empleado?.existeEmpleado ? (
+                                                                <>
+                                                                    <br/>
+                                                                    <span className="text-xs font-bold">
+                                                                        El empleado no existe
+                                                                    </span>
+                                                                </>
+                                                            ) : ''
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell className="w-[calc(50%_-_40px)] min-w-[calc(50%_-_40px)] border text-wrap">
+                                                        { String(new Intl.NumberFormat("es-CO", {
+                                                            style: "currency",
+                                                            currency: "COP",
+                                                            minimumFractionDigits: 2, // puedes ajustar si quieres mostrar decimales
+                                                        }).format(Number(empleado?.pagoBonificacion))) }
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        })
+                                    }
+                                    <TableRow>
+                                        <TableCell colSpan={2} className="font-medium w-10 border">
+                                            Total Pago a bonificar<br/><span className="text-xs text-red-400">¡Solo empleados existentes!</span>
+                                        </TableCell>
+                                        <TableCell className="w-[calc(50%_-_40px)] min-w-[calc(50%_-_40px)] border font-medium">
+                                            { String(new Intl.NumberFormat("es-CO", {
+                                                style: "currency",
+                                                currency: "COP",
+                                                minimumFractionDigits: 4, // puedes ajustar si quieres mostrar decimales
+                                            }).format(Number(
+                                                bonificacionesEmpleadosDataExcel.reduce((acum, pago) => pago?.existeEmpleado ? acum + pago?.pagoBonificacion : acum, 0)
+                                            ))) }
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                            <div className="flex text-center text-xs text-red-400">
+                                Los empleados con marca no se les registrará las bonificaciones ya que no existen en la base de datos.
+                            </div>
+                        </div>
+                    ) : ''
+                }
                 <button onClick={handleFile} className="cursor-pointer relative flex flex-col justify-center items-center">
-                    <ArrowBigRight className="w-20 h-10"/>
+                    {
+                        data?.typeForm === typeFormEnum.IngresoBonificacion ? (
+                            <CirclePlusIcon className="w-20 h-10"/>
+                        ) : (
+                            <ArrowBigRight className="w-20 h-10"/>
+                        )
+                    }
                     <span className="font-bold">{data?.buttonLabel}</span>
                 </button>
                 {
@@ -657,7 +744,7 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                                                     <button
                                                         onClick={async (e) => {
                                                             const file = await generateCertificado('vencimiento', contrato)
-                                                            if(file) {
+                                                            if (file) {
                                                                 const blob = new Blob([file as BlobPart], {type: "application/pdf"});
                                                                 const url = URL.createObjectURL(blob);
                                                                 setFileDownload({
@@ -689,7 +776,7 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                                 })
                             }
                         </div>
-                    ) : (
+                    ) : data?.typeForm !== typeFormEnum.IngresoBonificacion ?(
                         <>
                             {
                                 filesDownload.length > 0 ? (
@@ -745,7 +832,7 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                                     )
                                     : (
                                         <>
-                                            <div className="flex flex-col items-center justify-center border-2 py-5 border-gray-500 rounded-2xl gap-y-2 w-72 h-80">
+                                            <div className="flex flex-col items-center justify-center border-2 py-5 border-gray-500 rounded-2xl gap-y-2 min-w-72 w-72 h-80">
                                                 {
                                                     !isLoading ? (
                                                         fileDownload?.fileName !== undefined ? (
@@ -772,7 +859,7 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                                                                                     const nombre = [primerNombre, segundoNombre, primerApellido, segundoApellido].join(" ")
                                                                                     const subject = "Certificado Laboral";
                                                                                     const htmlText = `<p><b>Hola ${nombre}</b>,\nA Continuación, te adjuntamos el certificado laboral solicitado. \nEste correo es automatico, por favor no responder</p>`
-                                                                                    sendEmail(nombre, emailTo, fileDownload,subject, htmlText ).then(() => {
+                                                                                    sendEmail(nombre, emailTo, fileDownload, subject, htmlText).then(() => {
                                                                                         alert("Certificado Laboral enviado correctamente a " + emailTo)
                                                                                     })
                                                                                 } else {
@@ -815,10 +902,67 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                                         </>
                                     )}
                         </>
-                    )
+                    ) : ''
                 }
 
             </div>
         </>
     );
+
+    async function listarDatos() {
+        const listaEmpleados = await getAllEmpleadosActivos();
+        if (listaEmpleados && file) {
+            const listaEmpleadosExcel = await generateData(file);
+            if (listaEmpleadosExcel) {
+                const bonificacionesExcel = listaEmpleadosExcel
+                    .filter((empleadoExcel) => !isNaN(Number(empleadoExcel.cedula)))
+                    .map((empleadoExcel) => {
+                        const existe = listaEmpleados?.some(
+                            (empleado) => empleado.cedula == empleadoExcel.cedula
+                        );
+                        return {
+                            ...empleadoExcel,
+                            existeEmpleado: existe,
+                        };
+                    });
+                bonificacionesExcel.sort((x, y) => {
+                    return Number(x.existeEmpleado) - Number(y.existeEmpleado);
+                });
+                setBonificacionesEmpleadosDataExcel(bonificacionesExcel)
+            }
+        }
+    }
+
+    async function generateData(data: File) {
+        try {
+            const dataFile = await data.arrayBuffer();
+            const workbook = XLSX.read(dataFile, {type: "array"});
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            interface RawEmployeeData {
+                "CEDULA": string;
+                "NOMBRE_EMPLEADO": string;
+                "PAGO": string | number;
+            }
+            const jsonData = XLSX.utils.sheet_to_json<RawEmployeeData>(worksheet, {
+                defval: "",
+                range: 6
+            });
+
+            const empleadosExcel: BonificacionesDataExcelInterface[] = [
+                ...new Set(jsonData.map((r) => {
+                    console.log('R:', r)
+                    return {
+                        cedula: r["CEDULA"],
+                        nombreEmpleado: r["NOMBRE_EMPLEADO"],
+                        pagoBonificacion: Number(r["PAGO"]),
+                    } as BonificacionesDataExcelInterface
+                }))
+            ];
+            console.log('Empleados Excel', empleadosExcel)
+            return empleadosExcel;
+        } catch (e) {
+            console.log(e)
+        }
+    }
 }

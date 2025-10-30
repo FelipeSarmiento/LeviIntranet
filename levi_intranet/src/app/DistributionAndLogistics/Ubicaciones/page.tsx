@@ -5,8 +5,6 @@ import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {CircleChevronLeftIcon, CircleChevronRightIcon, PrinterIcon, TrashIcon} from 'lucide-react';
 import {useEffect, useState} from "react";
-import * as XLSX from "xlsx";
-import {generarPDFExito} from "@/lib/hooks/etiquetas/etiquetasExitoHooks";
 import {BodegasInterface, ItemsInterface, ItemsToPrintInterface, UbicacionesInterface} from "@/lib/interfaces/_interfaces";
 import {getAllBodegas, getAllUbcaciones} from "@/lib/hooks/api/siesaBackEndAPI";
 import {generarPDFUbicaciones} from "@/lib/hooks/etiquetas/etiquetasUbicacionesHooks";
