@@ -43,9 +43,11 @@ const itemsNavBar = [
                 title: "Planos",
                 href: "/Wholesale/Planos",
                 items: [
-                    'Requisiciones Jumbo',
-                    'Requisiciones Exito por Bodega',
-                    'Requisiciones Exito por Pedido'
+                    'Plano Jumbo',
+                    'Plano Falabella',
+                    'Consignaciones Jumbo',
+                    'Consignaciones Falabella',
+                    'Facturación VMI',
                 ]
             },
             {
@@ -64,14 +66,14 @@ const itemsNavBar = [
         ]
     },
     {
-        title: "MPIM",
+        title: "NPIM",
         modules: [
             {
                 title: "TPO a OCI",
                 href: "/MPIM/TPOaOCI",
             },
             {
-                title: "Pedidos Definitivos",
+                title: "Pedidos Definitivos*",
                 href: "/MPIM/TPOaOCI",
             }
         ]
@@ -92,12 +94,12 @@ const itemsNavBar = [
                 href: "/HumanResources/Bonificaciones",
                 items: [
                     'Ingresar Bonificaciones',
-                    'Liquidar Bonificaciones*'
+                    'Liquidar Bonificaciones'
                 ]
             },
             {
                 title: "Certificados",
-                href: "/HumanResources/Bonificaciones",
+                href: "/HumanResources/Certificados",
                 items: [
                     'Certificados Laborales Activos',
                     'Certificados Laborales Retirados',
@@ -124,7 +126,7 @@ const itemsNavBar = [
         modules: [
             {
                 title: "Remisiones Jumbo",
-                href: "/DistributionAndLogistics/Nomina",
+                href: "/DistributionAndLogistics/Remisiones",
             },
             {
                 title: "Impresión Códigos de Barra",
@@ -160,7 +162,7 @@ export function NavigationBar() {
             <NavigationMenuList>
                 <NavigationMenuItem>
                     <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                        <Link href="">Home</Link>
+                        <Link href="/">Home</Link>
                     </NavigationMenuLink>
                 </NavigationMenuItem>
                 {

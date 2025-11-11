@@ -1,4 +1,53 @@
 export interface ItemsInterface {
+    idCia: number;
+    id: number;
+    rowId: number;
+    referencia: string;
+    descripcion: string;
+    descripcionCorta: string;
+    idGrupoImpositivo: string;
+    idTipoInvServ: string;
+    idGrupoDscto: null;
+    indTipoItem: number;
+    indCompra: number;
+    indVenta: number;
+    indManufactura: number;
+    indListaPreciosExt: number;
+    indLote: number;
+    indLoteAsignacion: number;
+    indSobrecostos: number;
+    vidaUtil: number;
+    rowIdTerceroProv: number;
+    idSucursalProv: null;
+    rowIdTerceroCli: number;
+    idSucursalCli: null;
+    idUnidadInventario: string;
+    idUnidadAdicional: null;
+    idUnidadOrden: string;
+    idUnidadEmpaque: null;
+    idDescripcionTecnica: string;
+    idExtension1: string;
+    idExtension2: string;
+    rowIdFoto: number;
+    notas: string;
+    idSegmentoCosto: number;
+    usuarioCreacion: string;
+    usuarioActualizacion: string;
+    fechaCreacion: string;
+    fechaActualizacion: string;
+    indSerial: number;
+    indCfgSerial: null;
+    indPaquete: number;
+    rowIdMovtoEntidad: number;
+    indExento: number;
+    indVentaInterno: number;
+    indGenerico: number;
+    indGumUnificado: number;
+    idUnidadPrecio: null;
+    indControlado: number;
+}
+
+export interface ItemsEtiquetasInterface {
     idItem: string;
     codigo: string,
     tienda: string,
@@ -9,7 +58,7 @@ export interface ItemsInterface {
     sublinea: string,
     plu: string,
     precioPublico: string,
-    cantidad: string,
+    cantidad: number,
     fecha: string,
     codigoBarra: string
 }
@@ -216,6 +265,16 @@ export interface BonificacionesDataExcelInterface {
     nombreEmpleado: string;
     pagoBonificacion: number;
     existeEmpleado: boolean;
+}
+
+export interface BonificacionesInterface {
+    empleado: number,
+    periodo: string,
+    valor: number,
+    fechaCaptura: string,
+    centroCostos: number,
+    generado: boolean,
+    responsable: string
 }
 
 export interface TasaCambioInterface {

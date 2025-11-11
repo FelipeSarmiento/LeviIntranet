@@ -7,7 +7,7 @@ import {PrinterIcon} from 'lucide-react';
 import {useEffect, useState} from "react";
 import * as XLSX from "xlsx";
 import {generarPDFExito} from "@/lib/hooks/etiquetas/etiquetasExitoHooks";
-import {ItemsInterface, ItemsToPrintInterface} from "@/lib/interfaces/_interfaces";
+import {ItemsEtiquetasInterface, ItemsToPrintInterface} from "@/lib/interfaces/_interfaces";
 
 
 
@@ -16,14 +16,14 @@ export default function Home() {
 
 
 
-    const [file, setFile] = useState<FileList>();
+    const [file, setFile] = useState<File>();
     const [listaBodegas, setListaBodegas] = useState<string[]>([])
     const [dataExcel, setDataExcel] = useState([])
     const [documento, setDocumento] = useState<string>('')
     const [listaPrecio, setListaPrecio] = useState('')
     const [tipoBusqueda, setTipoBusqueda] = useState('manual')
     const [itemToSearch, setItemToSearch] = useState('')
-    const [items, setItems] = useState<ItemsInterface[]>([])
+    const [items, setItems] = useState<ItemsEtiquetasInterface[]>([])
     const [itemsToPrint, setItemsToPrint] = useState<ItemsToPrintInterface[]>([])
 
     useEffect(() => {
@@ -190,7 +190,6 @@ export default function Home() {
                 ...new Set(jsonData.map((r) => r["TIENDA"]).filter((t) => t !== undefined))
             ];
 
-            console.log('Documentos:', documentos)
             const rs = []
 
             if (documentos){
@@ -217,7 +216,7 @@ export default function Home() {
                             precioPublico: row["PRECIO PUBLICO"],
                             cantidad: row[" CARGA DESEADA ( INICIAL ) "],
                             fecha: row["fecha"],
-                        } as itemsInterface
+                        } as ItemsEtiquetasInterface
 
                         function generateUUID() {
                             let d = new Date().getTime();

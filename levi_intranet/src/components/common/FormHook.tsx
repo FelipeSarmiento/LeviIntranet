@@ -1,5 +1,5 @@
 "use client";
-import * as XLSX from "xlsx";
+import  * as XLSX from "xlsx";
 import Image from "next/image";
 import {typeFormEnum} from "@/lib/enums/typeFormEnum";
 import {generateRequisicionesPlano, generateRequisicionesPedidoPlano} from "@/lib/hooks/requisiciones";
@@ -15,7 +15,16 @@ import {
 } from "@/components/ui/select"
 import {ArrowBigRight, CirclePlusIcon, DownloadIcon, EyeIcon, File, LoaderIcon} from "lucide-react";
 import {useEffect, useState} from "react";
-import {EmpleadoInterface, DataFormHookInterface, FileDownloadInterface, FilesDownloadInterface, QuincenasInterface, BonificacionesDataExcelInterface, UbicacionesInterface} from "@/lib/interfaces/_interfaces";
+import {
+    EmpleadoInterface,
+    DataFormHookInterface,
+    FileDownloadInterface,
+    FilesDownloadInterface,
+    QuincenasInterface,
+    BonificacionesDataExcelInterface,
+    UbicacionesInterface,
+    BonificacionesInterface
+} from "@/lib/interfaces/_interfaces";
 import {getDataRemisiones} from "@/lib/hooks/remisiones";
 import {generateCertificado} from "@/lib/hooks/certificados";
 import {
@@ -28,7 +37,8 @@ import {
 } from "@/lib/hooks/api/ofimaBackEndAPI";
 import {sendEmail} from "@/components/common/mailHook";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {addBonificaciones} from "@/lib/hooks/api/levisBackEndAPI";
+import {addBonificaciones, getAllBonificacionesByPeriodoAndResponsable, uploadBonificacionesToOfima} from "@/lib/hooks/api/levisBackEndAPI";
+import {generatePlanoOCI} from "@/lib/hooks/TPOaOCI";
 
 export const FormHook = ({data}: { data: DataFormHookInterface }) => {
 
@@ -55,11 +65,13 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
     const [filesDownload, setFilesDownload] = useState<FilesDownloadInterface[]>([])
     const [emailTo, setEmailTo] = useState<string>()
     const [dataEmployee, setDataEmployee] = useState<EmpleadoInterface>()
+    const [dataEmployees, setDataEmployees] = useState<EmpleadoInterface[]>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [funcionesEnable, setFuncionesEnable] = useState<boolean>(false)
     const [historialContratosEnable, setHistorialContratosEnable] = useState<boolean>(false)
     const [contratosProximosVencer, setContratosProximosVencer] = useState<EmpleadoInterface[]>()
     const [bonificacionesEmpleadosDataExcel, setBonificacionesEmpleadosDataExcel] = useState<BonificacionesDataExcelInterface[]>()
+    const [bonificacionesEmpleados, setBonificacionesEmpleados] = useState<BonificacionesInterface[]>()
 
     useEffect(() => {
         if (error) {
@@ -298,6 +310,20 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                             alert("Error al ingresar las bonificaciones")
                         }
                     }
+                    break;
+                case typeFormEnum.LiquidacionBonificacion:
+                    if (quincenaSelect){
+                        const result = await uploadBonificacionesToOfima("PRUEBA", "Felipe Sarmiento")
+                        if (result){
+                            alert("Se han subido las bonificaciones a Ofima correctamente")
+                        }
+                        else {
+                            alert("Error al subir las bonificaciones a Ofima")
+                        }
+                    }
+                    break;
+                case typeFormEnum.TPOaOCI:
+                    plano = await generatePlanoOCI(jsonData);
                     break;
             }
 
@@ -611,6 +637,17 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                             </div>
                         ) : ''
                     }
+                    {
+                        data?.typeForm === typeFormEnum.LiquidacionBonificacion ? (
+                            <div className="flex gap-x-2">
+                                {/* CAMBIAR VALORES HARD CODED */}
+                                <button onClick={() => listarBonificaciones('PRUEBA', 'Felipe Sarmiento')}
+                                        className=" rounded border-2  disabled:text-gray-500 hover:border-red-700 disabled:border-gray-500  flex items-center justify-center h-1/4 cursor-pointer">
+                                    <span className="py-2 px-4 ">Listar Datos</span>
+                                </button>
+                            </div>
+                        ) : ''
+                    }
                 </div>
                 {
                     bonificacionesEmpleadosDataExcel ? (
@@ -677,9 +714,65 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                         </div>
                     ) : ''
                 }
+                {
+                    bonificacionesEmpleados ? (
+                        <div className="flex flex-col items-center border-2 py-2 px-2 border-gray-500 rounded-2xl gap-y-2 max-w-[550px] h-80">
+                            <Table className="border font-normal w-full">
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-10">Cedula</TableHead>
+                                        <TableHead className="w-40 font-medium">Nombres</TableHead>
+                                        <TableHead className="w-40 font-medium">Pagos</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody className="w-full">
+                                    {
+                                        bonificacionesEmpleados.map((empleado) => {
+                                            return (
+                                                <TableRow key={"empleado-" + empleado?.empleado}>
+                                                    <TableCell className="font-medium w-10 border">
+                                                        {empleado?.empleado}
+                                                    </TableCell>
+                                                    <TableCell className="w-[calc(50%_-_40px)] min-w-[calc(50%_-_40px)] border">
+                                                        {dataEmployees ?
+                                                            dataEmployees.find(
+                                                                (employee) => String(employee.cedula) === String(empleado.empleado)
+                                                            )?.nombre : ''
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell className="w-[calc(50%_-_40px)] min-w-[calc(50%_-_40px)] border text-wrap">
+                                                        { String(new Intl.NumberFormat("es-CO", {
+                                                            style: "currency",
+                                                            currency: "COP",
+                                                            minimumFractionDigits: 2,
+                                                        }).format(Number(empleado?.valor))) }
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        })
+                                    }
+                                    <TableRow>
+                                        <TableCell colSpan={2} className="font-medium w-10 border">
+                                            Total Pago a bonificar
+                                        </TableCell>
+                                        <TableCell className="w-[calc(50%_-_40px)] min-w-[calc(50%_-_40px)] border font-medium">
+                                            { String(new Intl.NumberFormat("es-CO", {
+                                                style: "currency",
+                                                currency: "COP",
+                                                minimumFractionDigits: 4, // puedes ajustar si quieres mostrar decimales
+                                            }).format(Number(
+                                                bonificacionesEmpleados.reduce((acum, pago) =>  acum + pago?.valor, 0)
+                                            ))) }
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </div>
+                    ) : ''
+                }
                 <button onClick={handleFile} className="cursor-pointer relative flex flex-col justify-center items-center">
                     {
-                        data?.typeForm === typeFormEnum.IngresoBonificacion ? (
+                        data?.typeForm === typeFormEnum.IngresoBonificacion || data?.typeForm === typeFormEnum.LiquidacionBonificacion ? (
                             <CirclePlusIcon className="w-20 h-10"/>
                         ) : (
                             <ArrowBigRight className="w-20 h-10"/>
@@ -776,7 +869,7 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                                 })
                             }
                         </div>
-                    ) : data?.typeForm !== typeFormEnum.IngresoBonificacion ?(
+                    ) : data?.typeForm !== typeFormEnum.IngresoBonificacion && data?.typeForm !== typeFormEnum.LiquidacionBonificacion ?(
                         <>
                             {
                                 filesDownload.length > 0 ? (
@@ -931,6 +1024,13 @@ export const FormHook = ({data}: { data: DataFormHookInterface }) => {
                 setBonificacionesEmpleadosDataExcel(bonificacionesExcel)
             }
         }
+    }
+
+    async function listarBonificaciones(periodo: string, responsable: string) {
+        const result = await getAllBonificacionesByPeriodoAndResponsable(periodo, responsable);
+        const resultEmployees = await getAllEmpleadosActivos();
+        setDataEmployees(resultEmployees);
+        setBonificacionesEmpleados(result)
     }
 
     async function generateData(data: File) {

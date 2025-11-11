@@ -5,8 +5,8 @@ import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {CircleChevronLeftIcon, CircleChevronRightIcon, PrinterIcon, TrashIcon} from 'lucide-react';
 import {useEffect, useState} from "react";
-import {BodegasInterface, ItemsInterface, ItemsToPrintInterface, UbicacionesInterface} from "@/lib/interfaces/_interfaces";
-import {getAllBodegas, getAllUbcaciones} from "@/lib/hooks/api/siesaBackEndAPI";
+import {BodegasInterface, ItemsEtiquetasInterface, ItemsToPrintInterface, UbicacionesInterface} from "@/lib/interfaces/_interfaces";
+import {getAllBodegas, getAllUbicaciones} from "@/lib/hooks/api/siesaBackEndAPI";
 import {generarPDFUbicaciones} from "@/lib/hooks/etiquetas/etiquetasUbicacionesHooks";
 
 export default function Home() {
@@ -39,7 +39,7 @@ export default function Home() {
                 parseInt(String(ubicaciones.length / 50 + 1))
             )
         )
-        getAllUbcaciones(bodega, '01').then((res) => {
+        getAllUbicaciones(bodega, '01').then((res) => {
             setUbicaciones(res)
             const total = searchInput ? (
                 res.filter((ubicacion) => {

@@ -1,6 +1,7 @@
 "use client";
 import {PDFDocument, rgb, StandardFonts} from "pdf-lib";
 import bwipjs from "bwip-js";
+import {ItemsEtiquetasInterface} from "@/lib/interfaces/_interfaces";
 
 const LABEL_WIDTH_IN = 1.1417322834646; // ancho de cada sticker en pulgadas
 const LABEL_HEIGHT_IN = 2.3;   // alto de cada sticker en pulgadas
@@ -246,7 +247,7 @@ interface LabelItem {
 }
 
 
-export const generarPDFExito = async (data: LabelItem[]) => {
+export const generarPDFExito = async (data: ItemsEtiquetasInterface[]) => {
     const pdfDoc = await PDFDocument.create();
     const helv = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const helvBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);

@@ -3,7 +3,7 @@ import {
     ActivosFijosInterface,
     BodegasInterface,
     CentroCostosSiesaInterface,
-    ItemsInterface,
+    ItemsEtiquetasInterface, ItemsInterface, ItemsToPrintInterface,
     ListaPreciosInterface, RemisionesInterface,
     TasaCambioInterface,
     TipoInventariosInterface,
@@ -107,7 +107,7 @@ export async function getActivosFijos(centroCosto : string, tipoInventario: stri
         return [];
     }
 }
-export async function getAllUbcaciones(bodega: string, compania: string) {
+export async function getAllUbicaciones(bodega: string, compania: string) {
     const urlF = url +  variablesEnum.urlUbicaciones + "?bodega=" + bodega + "&compania=" + compania;
 
     try {
@@ -192,7 +192,54 @@ export async function getAllItemsById(item : string, listaPrecio : string, compa
             throw new Error(`Error HTTP: ${response.status}`);
         }
 
-        const data: ItemsInterface[] = await response.json();
+        const data: ItemsEtiquetasInterface[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+        return [];
+    }
+}
+export async function getAllItemsByIds(item : string[], compania: string) {
+    const urlF = url +  variablesEnum.urlItemsByIds + '?compania=' + compania;
+
+    try {
+        const response = await fetch(urlF, {
+            method: "POST",
+            headers: {
+                "Authorization": `Basic ${credentials}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(item)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data: ItemsToPrintInterface[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+        return [];
+    }
+}
+export async function getItemById(item : string) {
+    const urlF = url +  variablesEnum.urlItemById + '?id=' + item;
+
+    try {
+        const response = await fetch(urlF, {
+            method: "GET",
+            headers: {
+                "Authorization": `Basic ${credentials}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data: ItemsInterface = await response.json();
         return data;
     } catch (error) {
         console.error("Error en la solicitud:", error);
@@ -216,7 +263,7 @@ export async function getAllItemsByCodigoBarra(codigoBarra : string, listaPrecio
             throw new Error(`Error HTTP: ${response.status}`);
         }
 
-        const data: ItemsInterface[] = await response.json();
+        const data: ItemsEtiquetasInterface[] = await response.json();
         return data;
     } catch (error) {
         console.error("Error en la solicitud:", error);

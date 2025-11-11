@@ -14,7 +14,6 @@ export default function Home() {
             typeForm: typeFormEnum.TPOaOCI,
             information: "TPO a OCI",
             fileEnable : true,
-            remisionesEnable: true,
             buttonLabel : "Generar Plano",
         }
     ]

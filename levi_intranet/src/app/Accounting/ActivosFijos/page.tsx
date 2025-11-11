@@ -7,8 +7,8 @@ import {CircleChevronLeftIcon, CircleChevronRightIcon, PrinterIcon, TrashIcon} f
 import {useEffect, useState} from "react";
 import * as XLSX from "xlsx";
 import {generarPDFExito} from "@/lib/hooks/etiquetas/etiquetasExitoHooks";
-import {ActivosFijosInterface, BodegasInterface, CentroCostosSiesaInterface, ItemsInterface, ItemsToPrintInterface, TipoInventariosInterface, UbicacionesInterface} from "@/lib/interfaces/_interfaces";
-import {getActivosFijos, getAllBodegas, getAllCentroCostos, getAllUbcaciones, getTipoInventarios} from "@/lib/hooks/api/siesaBackEndAPI";
+import {ActivosFijosInterface, BodegasInterface, CentroCostosSiesaInterface, ItemsEtiquetasInterface, ItemsToPrintInterface, TipoInventariosInterface, UbicacionesInterface} from "@/lib/interfaces/_interfaces";
+import {getActivosFijos, getAllBodegas, getAllCentroCostos, getAllUbicaciones, getTipoInventarios} from "@/lib/hooks/api/siesaBackEndAPI";
 import {generarPDFUbicaciones} from "@/lib/hooks/etiquetas/etiquetasUbicacionesHooks";
 import {generarPDFActivosFijos} from "@/lib/hooks/etiquetas/etiquetasActivosFijosHooks";
 
@@ -455,12 +455,12 @@ export default function Home() {
                                                                         </TableCell>
                                                                         <TableCell className="w-[calc(50%_-_40px)] min-w-[calc(50%_-_40px)] border text-wrap">
                                                                             {activoFijo.centroCosto?.centroCosto}
-                                                                            <span className="text-red-500 mx-2">|</span>
+                                                                            <span className="font-extrabold mx-2">|</span>
                                                                             {activoFijo.centroCosto?.descripcion}
                                                                         </TableCell>
                                                                         <TableCell className="w-[calc(50%_-_40px)] min-w-[calc(50%_-_40px)] border text-wrap">
                                                                             {activoFijo.tipoInventario?.idTipoInventario}
-                                                                            <span className="text-red-500 mx-2">|</span>
+                                                                            <span className="font-extrabold mx-2">|</span>
                                                                             {activoFijo.tipoInventario?.descripcion}
                                                                         </TableCell>
                                                                     </TableRow>

@@ -30,7 +30,7 @@ export default function Home() {
       </div>
       <div className="w-2/4 h-full flex flex-col space-y-10 px-10 items-center justify-center">
           <h2 className="text-3xl">
-              ¡Bienvenido <span className="font-bold">Felipe Sarmiento!</span>
+              ¡Bienvenido <span className="font-bold">Felipe Sarmiento</span>!
           </h2>
           <div className="w-full space-y-3">
               <h3>Accesos Directos</h3>

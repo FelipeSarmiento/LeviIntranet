@@ -27,14 +27,11 @@ export default async function Home() {
             typeForm: typeFormEnum.LiquidacionBonificacion,
             information: "Liquidación Bonificación",
             responsibleEnable: true,
-            dateEnable: true,
-            fileEnable: true,
-            customButtons: true,
             quincenaEnable: true,
             quincenas,
             primaryButtonLabel: "Consultar",
             secondButtonLabel: "Listar Datos",
-            buttonLabel : "Liquidar Bonificación",
+            buttonLabel : "Subir a Ofima",
         }
     ]
 
