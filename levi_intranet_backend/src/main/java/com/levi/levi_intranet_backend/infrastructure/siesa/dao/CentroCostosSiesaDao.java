@@ -30,9 +30,14 @@ public class CentroCostosSiesaDao {
 
     public List<CentroCostosSiesa> findAllCentroCostos() {
         var sql = """
-                SELECT f284_rowid, f284_id, f284_descripcion
+                SELECT
+                    f284_rowid as idCentroCosto,
+                    f284_id as centroCosto,
+                    f284_descripcion as descripcion
                     FROM t284_co_ccosto
                     WHERE f284_id_cia = 01
+                    AND f284_notas NOT LIKE '%INHABILITADO%'
+                    AND f284_id NOT LIKE '9%'
                     ORDER BY f284_id
                 """;
         var list = jdbc.query(sql, MAPPER);

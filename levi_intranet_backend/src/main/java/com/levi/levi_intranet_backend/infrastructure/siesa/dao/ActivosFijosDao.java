@@ -1,48 +1,73 @@
 package com.levi.levi_intranet_backend.infrastructure.siesa.dao;
 
-import com.levi.levi_intranet_backend.domain.siesa.CentroCostosSiesa;
-import com.levi.levi_intranet_backend.domain.siesa.TipoInventarios;
+import com.levi.levi_intranet_backend.domain.siesa.ActivosFijos;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 @Repository
-public class TipoInventarioDao {
+public class ActivosFijosDao {
     private final NamedParameterJdbcTemplate jdbc;
 
-    public TipoInventarioDao(NamedParameterJdbcTemplate jdbc) {
+    public ActivosFijosDao(NamedParameterJdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
-    private static final RowMapper<TipoInventarios> MAPPER = new RowMapper<TipoInventarios>() {
-        @Override
-        public TipoInventarios mapRow(ResultSet rs, int rowNum) throws SQLException {
-            TipoInventarios ti = new TipoInventarios();
-            ti.setIdTipoInventario(rs.getString("idTipoInventario"));
-            ti.setDescripcion(rs.getString("descripcion"));
-            return ti;
-        }
+    private static final RowMapper<ActivosFijos> MAPPER = (rs, rowNum) -> {
+        ActivosFijos af = new ActivosFijos();
+        af.setIdActivoFijo(rs.getString("idActivoFijo"));
+        af.setDescripcion(rs.getString("descripcion"));
+        af.setRowIdActivoFijo(rs.getString("rowIdActivoFijo"));
+        af.setIdCompania(rs.getString("idCompania"));
+        af.setReferencia(rs.getString("referencia"));
+        af.setCompania(rs.getString("compania"));
+        af.setRowIdCentroCosto(rs.getString("rowIdCentroCosto"));
+        af.setRowIdResponsable(rs.getString("rowIdResponsable"));
+        af.setIdUn(rs.getString("idUn"));
+        af.setRowIdMovimientoEntidad(rs.getString("rowIdMovimientoEntidad"));
+        af.setMarca(rs.getString("marca"));
+        af.setModelo(rs.getString("modelo"));
+        af.setSerie(rs.getString("serie"));
+        af.setMotor(rs.getString("motor"));
+        af.setNotas(rs.getString("notas"));
+
+        return af;
     };
 
-    public List<TipoInventarios> findTipoInventariosByCentroCosto(String idCentroCosto, String compania) {
+    public List<ActivosFijos> findActivosFijos(String idCentroCosto, String tipoInventario, String compania) {
         var sql = """
-                select 
-                af.f262_id_tipo_inv_serv as idTipoInventario,
-                ti.f149_descripcion as descripcion
-                from t262_af_activos_fijos  af
-                inner join t149_mc_tipo_inv_serv ti
-                on af.f262_id_tipo_inv_serv = ti.f149_id and af.f262_id_cia = ti.f149_id_cia
-                where af.f262_id_cia = :compania  and f262_rowid_ccosto = :idCentroCosto
-                group by af.f262_id_tipo_inv_serv, ti.f149_descripcion
+                SELECT
+                    f262_rowid as rowIdActivoFijo,
+                    f262_id_cia as idCompania,
+                    f262_id as idActivoFijo,
+                    f262_referencia as referencia,
+                    f262_descripcion as descripcion,
+                    f262_id_co as compania,
+                    f262_rowid_ccosto as rowIdCentroCosto,
+                    f262_rowid_tercero_responsable as rowIdResponsable,
+                    f262_id_un as idUn,
+                    f263_rowid_movto_entidad as rowIdMovimientoEntidad,
+                    SPACE(50) as marca,
+                    SPACE(50) as modelo,
+                    SPACE(50) as serie,
+                    SPACE(50) as motor,
+                    ad.f263_notas as notas
+                FROM t262_af_activos_fijos  af
+                INNER JOIN t263_af_activos_fijos_adicion ad
+                ON af.f262_rowid = ad.f263_rowid_af
+                WHERE f263_ind_estado <> 9
+                AND f262_id_cia = :company
+                AND f262_rowid_ccosto = :idCentroCosto
+                AND f262_id_tipo_inv_serv = :tipoInventario
                 """;
-        var params = Map.of("idCentroCosto", idCentroCosto, "compania", compania);
-        var list = jdbc.query(sql, params, MAPPER);
-        return list;
+        var params = Map.of(
+                "idCentroCosto", idCentroCosto,
+                "company", compania,
+                "tipoInventario", tipoInventario
+        );
+        return jdbc.query(sql, params, MAPPER);
     }
 
 }

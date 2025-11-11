@@ -31,6 +31,10 @@ public class ItemService
         return dao.findItemsById(id, listaPrecio, compania);
     }
     @Transactional(transactionManager = "siesaTx")
+    public List<ItemsEtiquetas> getItemsByIds(String[] ids, String compania){
+        return dao.findItemsByIds(ids, compania);
+    }
+    @Transactional(transactionManager = "siesaTx")
     public List<ItemsEtiquetas> getItemsByCodigoBarra(String codigoBarra, String listaPrecio, String compania){
         return dao.findItemsByCodigoBarra(codigoBarra, listaPrecio, compania);
     }

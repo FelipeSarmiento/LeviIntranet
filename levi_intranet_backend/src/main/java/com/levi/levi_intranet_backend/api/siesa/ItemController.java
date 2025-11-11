@@ -30,6 +30,11 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getItemsById(id,  listaPrecio, compania));
     }
 
+    @PostMapping("/itemsByIds")
+    public ResponseEntity<?> getItemsByIds(@RequestBody String[] ids, @RequestParam String compania) {
+        return ResponseEntity.ok(itemService.getItemsByIds(ids,  compania));
+    }
+
     @GetMapping("/itemsByCodigoBarra")
 
     public ResponseEntity<?> getItemsByCodigoBarra(@RequestParam String codigoBarra, String listaPrecio, String compania) {

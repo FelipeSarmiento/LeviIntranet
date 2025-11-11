@@ -5,6 +5,7 @@ import java.util.Date;
 public class Empleados {
 
     private String cedula;
+    private String codigo;
     private String nombre;
     private Date fechaContrato;
     private Date fechaRetiro;
@@ -26,6 +27,7 @@ public class Empleados {
     private String primerNombre;
     private String segundoNombre;
     private String email;
+    private String grupo;
     private double activo;
 
     public Date getProrrogaUno() {
@@ -69,6 +71,18 @@ public class Empleados {
     }
     public void setCedula(String cedula) {
         this.cedula = cedula;
+    }
+    public String getCodigo() {
+        return codigo;
+    }
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+    public String getGrupo() {
+        return grupo;
+    }
+    public void setGrupo(String grupo) {
+        this.grupo = grupo;
     }
     public String getNombre() {
         return nombre;

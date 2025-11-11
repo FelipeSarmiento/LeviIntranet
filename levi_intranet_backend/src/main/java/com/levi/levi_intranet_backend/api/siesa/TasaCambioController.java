@@ -1,24 +1,25 @@
 package com.levi.levi_intranet_backend.api.siesa;
 
 import com.levi.levi_intranet_backend.application.siesa.ListaPreciosService;
+import com.levi.levi_intranet_backend.application.siesa.TasaCambioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/siesa/listaPrecios") // prefijo de la ruta
-public class ListaPrecioController {
+@RequestMapping("/api/siesa/tasaCambio") // prefijo de la ruta
+public class TasaCambioController {
 
-    private final ListaPreciosService listaPrecioService;
+    private final TasaCambioService tasaCambioService;
 
-    public ListaPrecioController(ListaPreciosService listaPrecioService) {
-        this.listaPrecioService = listaPrecioService;
+    public TasaCambioController(TasaCambioService tasaCambioService) {
+        this.tasaCambioService = tasaCambioService;
     }
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(listaPrecioService.getAllListaPrecios());
+        return ResponseEntity.ok(tasaCambioService.getAllTasaCambio());
     }
 
 }

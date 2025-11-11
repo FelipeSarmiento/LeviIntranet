@@ -1,6 +1,6 @@
 package com.levi.levi_intranet_backend.api.ofima;
 
-import com.levi.levi_intranet_backend.application.ofima.CertificadosService;
+import com.levi.levi_intranet_backend.application.ofima.EmpleadosService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,39 +11,49 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/ofima/empleados")
 public class EmpleadosController {
 
-    private final CertificadosService certificadosService;
+    private final EmpleadosService _empleadosService;
 
-    public EmpleadosController(CertificadosService certificadosService) {
-        this.certificadosService = certificadosService;
+    public EmpleadosController(EmpleadosService _empleadosService) {
+        this._empleadosService = _empleadosService;
     }
 
     @GetMapping("/activo")
-    public ResponseEntity<?> getCertificadoActivoByCedula(@RequestParam String cedula) {
-        return ResponseEntity.ok(certificadosService.getCertificadoActivoByCedula(cedula));
+    public ResponseEntity<?> getEmpleadoActivoByCedula(@RequestParam String cedula) {
+        return ResponseEntity.ok(_empleadosService.getEmpleadoActivoByCedula(cedula));
     }
 
+    // REVISAR
     @GetMapping("/activos")
-    public ResponseEntity<?> getCertificadoActivosByCedula(@RequestParam String cedula) {
-        return ResponseEntity.ok(certificadosService.getCertificadosActivoByCedula(cedula));
+    public ResponseEntity<?> getEmpleadosActivosByCedula(@RequestParam String cedula) {
+        return ResponseEntity.ok(_empleadosService.getEmpleadosActivoByCedula(cedula));
+    }
+    @GetMapping("/allActivos")
+    public ResponseEntity<?> getAllEmpleadosActivo() {
+        return ResponseEntity.ok(_empleadosService.getAllEmpleadosActivo());
+    }
+
+    @GetMapping("/allActivosByCedula")
+    public ResponseEntity<?> getAllEmpleadosActivosByCedulas(String[] cedulas) {
+        return ResponseEntity.ok(_empleadosService.getAllEmpleadosActivo());
     }
 
     @GetMapping("/retirado")
-    public ResponseEntity<?> getCertificadoRetiradoByCedula(@RequestParam String cedula) {
-        return ResponseEntity.ok(certificadosService.getCertificadoRetiradoByCedula(cedula));
+    public ResponseEntity<?> getEmpleadoRetiradoByCedula(@RequestParam String cedula) {
+        return ResponseEntity.ok(_empleadosService.getEmpleadoRetiradoByCedula(cedula));
     }
 
     @GetMapping("/retirados")
-    public ResponseEntity<?> getCertificadoRetiradosByCedula(@RequestParam String cedula) {
-        return ResponseEntity.ok(certificadosService.getCertificadosRetiradoByCedula(cedula));
+    public ResponseEntity<?> getEmpleadosRetiradosByCedula(@RequestParam String cedula) {
+        return ResponseEntity.ok(_empleadosService.getEmpleadosRetiradosByCedula(cedula));
     }
 
     @GetMapping("/ContratosProximoVencerByCedula")
-    public ResponseEntity<?> getContratosProximosVencerByCedula(@RequestParam String cedula, @RequestParam String centroCostos) {
-        return ResponseEntity.ok(certificadosService.getContratosProximosVencerByCedula(cedula, centroCostos));
+    public ResponseEntity<?> getEmpleadoProximoVencerByCedula(@RequestParam String cedula, @RequestParam String centroCostos) {
+        return ResponseEntity.ok(_empleadosService.getEmpleadosProximosVencerByCedula(cedula, centroCostos));
     }
 
     @GetMapping("/ContratosProximoVencer")
-    public ResponseEntity<?> getContratosProximosVencer() {
-        return ResponseEntity.ok(certificadosService.getContratosProximosVencer());
+    public ResponseEntity<?> getEmpleadosProximosVencer() {
+        return ResponseEntity.ok(_empleadosService.getEmpleadosProximosVencer());
     }
 }

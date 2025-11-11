@@ -1,16 +1,52 @@
 package com.levi.levi_intranet_backend.domain.siesa;
 
-public class ListaPrecios {
+import java.util.Date;
 
-    private String id;
-    private String descripcion;
+public class TasaCambio {
 
-    public ListaPrecios() {}
+    private short compania;
+    private String idTipoCambio ;
+    private String idMoneda ;
+    private Date fecha;
+    private double tasa;
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public short getCompania() {
+        return compania;
+    }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion.trim(); }
+    public void setCompania(short compania) {
+        this.compania = compania;
+    }
 
+    public String getIdTipoCambio() {
+        return idTipoCambio;
+    }
+
+    public void setIdTipoCambio(String idTipoCambio) {
+        this.idTipoCambio = idTipoCambio;
+    }
+
+    public String getIdMoneda() {
+        return idMoneda;
+    }
+
+    public void setIdMoneda(String idMoneda) {
+        this.idMoneda = idMoneda;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public double getTasa() {
+        return tasa;
+    }
+
+    public void setTasa(double tasa) {
+        this.tasa = tasa;
+    }
 }

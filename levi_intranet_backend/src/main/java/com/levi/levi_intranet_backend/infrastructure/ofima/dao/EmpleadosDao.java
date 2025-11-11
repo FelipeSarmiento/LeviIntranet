@@ -25,11 +25,12 @@ public class EmpleadosDao {
             Empleados c = new Empleados();
             c.setActivo(rs.getInt("Activo"));
             c.setCargo(rs.getString("Cargo").trim().toUpperCase(Locale.ROOT));
-            c.setNombre(rs.getString("Nombre").trim().toUpperCase(Locale.ROOT));
             c.setEmpresa(rs.getString("Empresa").trim());
             c.setFechaContrato(rs.getDate("FechaContrato"));
             c.setFechaRetiro(rs.getDate("FechaRetiro"));
             c.setCedula(rs.getString("Cedula").trim());
+            c.setCodigo(rs.getString("Codigo").trim());
+            c.setGrupo(rs.getString("Grupo").trim());
             c.setPrimerNombre(rs.getString("PrimerNombre").trim().toUpperCase(Locale.ROOT));
             c.setSegundoNombre(rs.getString("SegundoNombre").trim().toUpperCase(Locale.ROOT));
             c.setPrimerApellido(rs.getString("PrimerApellido").trim().toUpperCase(Locale.ROOT));
@@ -41,6 +42,8 @@ public class EmpleadosDao {
             DecimalFormat df = new DecimalFormat("#,000.000");
             c.setValorSalario(df.format(salario));
             c.setValorSalarioLetras(convertirNumeroALetras(salario));
+            c.setCodigoCentroCostos(rs.getString("CodigoCentroCostos").trim());
+            c.setNombre(STR."\{c.getPrimerNombre()} \{c.getSegundoNombre()} \{c.getPrimerApellido()} \{c.getSegundoApellido()}");
 
             return c;
         }
@@ -95,7 +98,8 @@ public class EmpleadosDao {
         var params = Map.of("Cedula", cedula);
         return jdbc.query(sql, params, MAPPER).stream().findFirst();
     }
-    public List<Empleados> findEmpleadosActivoByCedula(String cedula) {
+    // REVISAR SI SE NECESITA
+    public List<Empleados> findEmpleadosActivosByCedula(String cedula) {
         String sql = """
         SELECT
             CEDULA AS Cedula,
@@ -122,6 +126,63 @@ public class EmpleadosDao {
 """;
         var params = Map.of("Cedula", cedula);
         return jdbc.query(sql, params, MAPPER);
+    }
+    public List<Empleados> findAllEmpleadosActivos() {
+        String sql = """
+        SELECT
+            CEDULA AS Cedula,
+            CODIGO AS Codigo,
+            Nombre AS Nombre,
+            FECING AS FechaContrato,
+            FECRETIRO AS FechaRetiro,
+            'LEVIS' AS Empresa,
+            SALINTEGR AS SalarioIntegral,
+            SALFIJO AS SalarioFijo,
+            CAST(VALORHORA AS DECIMAL(18,2)) * CAST(HORASMES AS DECIMAL(18,2)) AS ValorSalario,
+            CAST(VALORHORA * HORASMES AS VARCHAR(50)) AS ValorSalarioLetras,
+            LOWER(CARGO) AS Cargo,
+            LOWER(TIPCONTRA) AS TipoContrato,
+            LOWER(APELLIDO) AS PrimerApellido,
+            APELLIDO2 AS SegundoApellido,
+            NOMBRE AS PrimerNombre,
+            NOMBRE2 AS SegundoNombre,
+            ACTIVO AS Activo,
+            VALORHORA AS ValorHora,
+            HORASMES AS HorasMes,
+            GRUPO AS Grupo,
+            CODCC AS CodigoCentroCostos
+        FROM MTEMPLEA
+        WHERE ACTIVO = 0
+        ORDER BY FECING DESC
+""";
+        return jdbc.query(sql, MAPPER);
+    }
+    public List<Empleados> findAllEmpleadosActivosByCedula(String[] cedulas) {
+        String conditionalQueryPart = String.join(",", cedulas);
+        String sql = """
+        SELECT
+            CEDULA AS Cedula,
+            Nombre AS Nombre,
+            FECING AS FechaContrato,
+            FECRETIRO AS FechaRetiro,
+            'LEVIS' AS Empresa,
+            SALINTEGR AS SalarioIntegral,
+            SALFIJO AS SalarioFijo,
+            CAST(VALORHORA AS DECIMAL(18,2)) * CAST(HORASMES AS DECIMAL(18,2)) AS ValorSalario,
+            CAST(VALORHORA * HORASMES AS VARCHAR(50)) AS ValorSalarioLetras,
+            LOWER(CARGO) AS Cargo,
+            LOWER(TIPCONTRA) AS TipoContrato,
+            LOWER(APELLIDO) AS PrimerApellido,
+            APELLIDO2 AS SegundoApellido,
+            NOMBRE AS PrimerNombre,
+            NOMBRE2 AS SegundoNombre,
+            ACTIVO AS Activo,
+            VALORHORA AS ValorHora,
+            HORASMES AS HorasMes
+        FROM MTEMPLEA
+        WHERE ACTIVO = 0
+        AND CEDULA IN (""" + conditionalQueryPart + ") ORDER BY FECING DESC";
+        return jdbc.query(sql, MAPPER);
     }
     public List<Empleados> findEmpleadosProximosVencer() {
         String sql = """
@@ -226,7 +287,7 @@ public class EmpleadosDao {
         var params = Map.of("Cedula", cedula);
         return jdbc.query(sql, params, MAPPER).stream().findFirst();
     }
-    public List<Empleados> findEmpleadosRetiradoByCedula(String cedula) {
+    public List<Empleados> findEmpleadosRetiradosByCedula(String cedula) {
         String sql = """
         SELECT
             CEDULA AS Cedula,

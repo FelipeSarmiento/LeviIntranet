@@ -15,7 +15,7 @@ public class RemisionController {
     }
 
     @PostMapping("/remisionByConsecutivo")
-    public ResponseEntity<?> getSucursalById(@RequestBody String[] consecutivos) {
+    public ResponseEntity<?> getRemisionesByConsecutivo(@RequestBody String[] consecutivos) {
         return ResponseEntity.ok(remisionService.getRemisionesByConsecutivo(consecutivos));
     }
 }

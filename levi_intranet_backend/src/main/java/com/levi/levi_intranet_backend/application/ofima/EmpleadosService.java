@@ -28,6 +28,10 @@ public class EmpleadosService
     public List<Empleados> getAllEmpleadosActivo(){
         return dao.findAllEmpleadosActivos();
     }
+    @Transactional(transactionManager = "ofimaTx")
+    public List<Empleados> getAllEmpleadosActivosByCedula(){
+        return dao.findAllEmpleadosActivos();
+    }
 
     @Transactional(transactionManager = "ofimaTx")
     public Optional<Empleados> getEmpleadoRetiradoByCedula(String cedula){

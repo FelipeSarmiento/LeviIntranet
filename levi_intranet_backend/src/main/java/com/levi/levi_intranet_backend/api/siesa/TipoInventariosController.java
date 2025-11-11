@@ -1,24 +1,25 @@
 package com.levi.levi_intranet_backend.api.siesa;
 
 import com.levi.levi_intranet_backend.application.siesa.CentroCostosSiesaService;
+import com.levi.levi_intranet_backend.application.siesa.TipoInventarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/siesa/centroCostos") // prefijo de la ruta
-public class CentroCostosSiesaController {
+@RequestMapping("/api/siesa/tipoInventarios") // prefijo de la ruta
+public class TipoInventariosController {
 
-    private final CentroCostosSiesaService centroCostosService;
+    private final TipoInventarioService tipoInventarioService;
 
-    public CentroCostosSiesaController(CentroCostosSiesaService centroCostosService) {
-        this.centroCostosService = centroCostosService;
+    public TipoInventariosController(TipoInventarioService tipoInventarioService) {
+        this.tipoInventarioService = tipoInventarioService;
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(centroCostosService.getAllCentroCostos());
+    public ResponseEntity<?> getAll(String centroCosto, String compania) {
+        return ResponseEntity.ok(tipoInventarioService.getTipoInventariosByCentroCosto(centroCosto, compania));
     }
 
 }
